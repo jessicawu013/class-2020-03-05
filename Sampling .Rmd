@@ -45,10 +45,29 @@ red_white %>%
 
 # kane's better way of creating a tibble with 20% red in a sample of 10000
 
-urn <- tibble(bean_ID = 1:10000,
+my_urn <- tibble(bean_ID = 1:10000,
               color = c(rep("Red", 2000), rep("White", 8000)))
 
-urn %>%
-  sample_n(10)
+simulate_class <- function(urn){
+  urn %>%
+  rep_sample_n(size = 25, reps = 51) %>% 
+  group_by(replicate) %>% 
+  summarize(red_sum = sum(color == "Red")) %>% 
+  mutate(perc_red = red_sum/25)
+}
+
+simulate_class(my_urn)
+
 ```
+
+```{r}
+sim_results <- tibble(sim_ID = 1:3,
+                      results = map(sim_ID,
+                                    ~ simulate_class(my_urn)))
+
+sim_results[[2]][[2]] %>%  
+  ggplot(aes(perc_red)) + 
+  geom_histogram(bins = 20)
+```
+
 
