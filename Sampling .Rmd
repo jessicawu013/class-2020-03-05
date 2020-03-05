@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(googlesheets4)
 library(fs)
+library(infer)
 ```
 
 ```{r}
@@ -20,7 +21,34 @@ beads <- read_sheet(ss = "14HmwN2cEVAJHupuehCuLdwG9BXtR3COrxDgaaylLhkA")
 beads %>%
   arrange(desc(Red))
 
-beads %>%
+graph <- beads %>%
   ggplot(aes(Red)) +
-  geom_bar()
+  geom_bar() +
+  labs(title = "Red Beads Sample of Gov 1005",
+       subtitle = "from 03/03")
+
+graph
+
+summary(beads)
 ```
+
+```{r}
+
+# our primitive way of doing things
+
+red_white <- tibble(
+  color = c("red", "red", "red", "red", "white")
+)
+
+red_white %>%
+  rep_sample_n(size = 25, replace = TRUE)
+
+# kane's better way of creating a tibble with 20% red in a sample of 10000
+
+urn <- tibble(bean_ID = 1:10000,
+              color = c(rep("Red", 2000), rep("White", 8000)))
+
+urn %>%
+  sample_n(10)
+```
+
